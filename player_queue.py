@@ -9,7 +9,11 @@ class PlayerQueue:
     def add_player(self, username):
         if username in self._player_dict:
             times_played = self._player_dict[username]
-            self._q.put((times_played, username))
+            #the queue class's internal list is public i guess
+            if not (times_played, username) in self._q.queue:
+                self._q.put((times_played, username))
+            else:
+                print('User already in queue!')
         else:
             self._q.put((0, username))
             self._player_dict[username] = 0

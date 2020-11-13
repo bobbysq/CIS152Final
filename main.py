@@ -4,6 +4,7 @@ if __name__ == "__main__":
     q = PlayerQueue()
 
     q.add_player('test1')
+    q.add_player('test1')
     q.add_player('test2')
     q.add_player('test3')
 
