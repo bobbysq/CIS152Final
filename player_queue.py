@@ -25,3 +25,7 @@ class PlayerQueue:
             return next_player
         else:
             return None
+
+    @property
+    def player_dict(self):
+        return self._player_dict
