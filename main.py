@@ -1,6 +1,26 @@
 from player_queue import PlayerQueue
 import json
 from os import path
+import configparser
+import twitch
+
+config = configparser.ConfigParser()
+config.read('config_real.ini')
+
+CLIENT_ID = config['DEFAULT']['ClientID']
+CLIENT_SECRET = config['DEFAULT']['ClientSecret']
+OAUTH = config['DEFAULT']['OAuth']
+CHANNEL = config['DEFAULT']['Channel']
+
+def handle_message(q, message: twitch.chat.Message) -> None:
+    print(message.sender + ': ' + message.text)
+
+    if message.text.startswith('!hello'):
+        message.chat.send('Hello world!')
+
+    if message.text.startswith('!join'):
+        #message.chat.send('/w ' + message.sender + ' the code is: [CODE HERE]')
+        message.chat.send('Hello, ' + message.sender + '. The code is: [CODE HERE]')
 
 if __name__ == "__main__":
     if path.exists('players.json'):
@@ -12,23 +32,12 @@ if __name__ == "__main__":
         player_data = {}
 
     q = PlayerQueue(player_data)
+    chat = twitch.Chat(channel='#bobbysq',
+                       nickname='PlayerQueueBot',
+                       oauth=OAUTH,
+                       helix=twitch.Helix(client_id=CLIENT_ID, client_secret=CLIENT_SECRET, use_cache=True))
 
-    q.add_player('test1')
-    q.add_player('test1')
-    q.add_player('test2')
-    q.add_player('test3')
-
-    print(q.get_next_player())
-    print(q.get_next_player())
-    print(q.get_next_player())
-
-    q.add_player('test4')
-    q.add_player('test2')
-    q.add_player('test1')
-
-    print(q.get_next_player())
-    print(q.get_next_player())
-    print(q.get_next_player())
+    chat.subscribe(lambda message: handle_message(q, message))
 
     json_out = json.dumps(q.player_dict)
 
