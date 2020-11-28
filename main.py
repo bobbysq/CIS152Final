@@ -19,8 +19,13 @@ def handle_message(q, message: twitch.chat.Message) -> None:
         message.chat.send('Hello world!')
 
     if message.text.startswith('!join'):
+        q.add_player(message.sender)
+        message.chat.send(message.sender + ', you are now in the queue')
+
+    if message.text.startswith('!next'):
         #message.chat.send('/w ' + message.sender + ' the code is: [CODE HERE]')
-        message.chat.send('Hello, ' + message.sender + '. The code is: [CODE HERE]')
+        if message.sender.lower() == CHANNEL.lower():
+            message.chat.send('Hello, ' + q.get_next_player() + '. The code is: [CODE HERE]')
 
 if __name__ == "__main__":
     if path.exists('players.json'):
@@ -32,7 +37,7 @@ if __name__ == "__main__":
         player_data = {}
 
     q = PlayerQueue(player_data)
-    chat = twitch.Chat(channel='#bobbysq',
+    chat = twitch.Chat(channel='#' + CHANNEL,
                        nickname='PlayerQueueBot',
                        oauth=OAUTH,
                        helix=twitch.Helix(client_id=CLIENT_ID, client_secret=CLIENT_SECRET, use_cache=True))
