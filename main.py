@@ -3,7 +3,7 @@ import json
 from os import path
 import configparser
 import twitch
-import sys
+import os
 
 config = configparser.ConfigParser()
 config.read('config_real.ini')
@@ -69,11 +69,14 @@ if __name__ == "__main__":
             next_player = q.get_next_player()
             if next_player:
                 pass
-                chat.send('@' + next_player + '. The code is: [CODE HERE]')
+                chat.send('@' + next_player + ', The code is: [CODE HERE]')
             else:
                 print('No one in queue!')
 
     with open('players.json', 'w') as f:
         json.dump(q.player_dict, f)
 
-    sys.exit(0)
+    chat.dispose()  # Unsubscribe the message handler
+    del chat
+
+    os._exit(0)
