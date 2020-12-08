@@ -26,6 +26,22 @@ class PlayerQueue:
         else:
             return None
 
+    def get_top_players(self):
+        player_array = list(self._player_dict.items())
+        arr_len = len(player_array)
+
+        #selection sort
+        for i in range(0, arr_len - 1):
+            min = i
+            for j in range(i + 1, arr_len):
+                if player_array[j][1] > player_array[min][1]:
+                    min = j
+            
+            # Swap the minimum with i
+            player_array[min], player_array[i] = player_array[i], player_array[min]
+
+        return player_array
+
     @property
     def player_dict(self):
         return self._player_dict

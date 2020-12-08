@@ -72,6 +72,8 @@ if __name__ == "__main__":
                 chat.send('@' + next_player + ', The code is: [CODE HERE]')
             else:
                 print('No one in queue!')
+        elif choice == 2:
+            print(q.get_top_players())
 
     with open('players.json', 'w') as f:
         json.dump(q.player_dict, f)
