@@ -15,7 +15,7 @@ CHANNEL = config['DEFAULT']['Channel']
 
 
 def handle_message(q, message: twitch.chat.Message) -> None:
-    print(message.sender + ': ' + message.text)
+    #print(message.sender + ': ' + message.text)
 
     if message.text.startswith('!hello'):
         message.chat.send('Hello world!')
@@ -43,6 +43,15 @@ def show_menu():
             print('Invalid choice.')
     return choice
 
+def exit_program(q, chat):
+    with open('players.json', 'w') as f:
+        json.dump(q.player_dict, f)
+
+    chat.dispose()  # Unsubscribe the message handler
+    del chat
+
+    os._exit(0)
+    
 
 if __name__ == "__main__":
     if path.exists('players.json'):
@@ -52,6 +61,9 @@ if __name__ == "__main__":
         f = open('players.json', 'w')  # create file if it doesn't exist
         f.close()
         player_data = {}
+
+    room_id = input('Room ID: ')
+    room_pass = input('Password (optional): ')
 
     q = PlayerQueue(player_data)
     chat = twitch.Chat(channel='#' + CHANNEL,
@@ -68,17 +80,13 @@ if __name__ == "__main__":
         if choice == 1:
             next_player = q.get_next_player()
             if next_player:
-                pass
-                chat.send('@' + next_player + ', The code is: [CODE HERE]')
+                if room_pass == '':
+                    chat.send('@' + next_player + ', The room ID is: ' + room_id)
+                else:
+                    chat.send('@' + next_player + ', The room ID is: ' + room_id + ' and the password is: ' + room_pass)
             else:
                 print('No one in queue!')
         elif choice == 2:
             print(q.get_top_players())
 
-    with open('players.json', 'w') as f:
-        json.dump(q.player_dict, f)
-
-    chat.dispose()  # Unsubscribe the message handler
-    del chat
-
-    os._exit(0)
+    exit_program(q, chat)
