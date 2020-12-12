@@ -18,6 +18,11 @@ CHANNEL = config['DEFAULT']['Channel']
 
 
 def handle_message(q, message: twitch.chat.Message) -> None:
+    ''' Handles the chat commands
+
+    :param q: Player Queue
+    :param message: Latest message from chat
+    '''
     #print(message.sender + ': ' + message.text)
 
     if message.text.startswith('!hello'):
@@ -29,6 +34,11 @@ def handle_message(q, message: twitch.chat.Message) -> None:
 
 
 def exit_program(q, chat):
+    ''' Exits the program and saves the player data to a JSON file
+
+    :param q: Player Queue
+    :param chat: Chat object
+    '''
     with open('players.json', 'w') as f:
         json.dump(q.player_dict, f)
 
@@ -39,9 +49,17 @@ def exit_program(q, chat):
 
 
 def next_player(q, chat, player_label, room_id, room_pass):
+    ''' Sends a message to the next player in the queue
+
+    :param q: Player Queue
+    :param chat: Chat object
+    :param player_label: Tkinter label showing current player
+    :param room_id: Tkinter StringVar with the room ID
+    :param room_pass: Tkinter StringVar with the room password
+    '''
     next_player = q.get_next_player()
     if next_player:
-        if room_pass == '':
+        if room_pass.get() == '':
             chat.send('@' + next_player + ', The room ID is: ' + room_id.get())
         else:
             chat.send('@' + next_player + ', The room ID is: ' +
@@ -52,15 +70,24 @@ def next_player(q, chat, player_label, room_id, room_pass):
 
 
 def show_top_players(player_arr):
+    '''Shows a dialogue box with the top 10 players
+
+    :param player_arr: Sorted list of tuples in the format of (player, times_played)
+    '''
     box_str = ''
+    i = 0
     for player in player_arr:
         box_str = box_str + player[0] + ': ' + str(player[1]) + '\n'
+        i += 1
+        if i == 10:
+            break
     tkinter.messagebox.showinfo(title='Top Players', message=box_str)
 
 
 if __name__ == "__main__":
     main_gui = gui.MainGUI()
 
+    # Load in player data
     if path.exists('players.json'):
         with open('players.json', 'r') as f:
             player_data = json.load(f)
