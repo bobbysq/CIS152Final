@@ -7,9 +7,10 @@ import twitch
 import os
 import tkinter
 import tkinter.messagebox
+import sys
 
 config = configparser.ConfigParser()
-config.read('config_real.ini')
+config.read('config.ini')
 
 CLIENT_ID = config['DEFAULT']['ClientID']
 CLIENT_SECRET = config['DEFAULT']['ClientSecret']
@@ -86,6 +87,10 @@ def show_top_players(player_arr):
 
 if __name__ == "__main__":
     main_gui = gui.MainGUI()
+
+    if CLIENT_ID == '' or CLIENT_SECRET == '' or OAUTH == '' or CHANNEL == '':
+        print('config.ini not filled out completely!')
+        sys.exit(1)
 
     # Load in player data
     if path.exists('players.json'):
