@@ -2,6 +2,7 @@ import tkinter
 from tkinter import ttk
 
 class MainGUI:
+    '''Class containing all GUI elements and making them accessible for main'''
     def __init__(self):
         self.m = tkinter.Tk() # where self.m is the name of the main window object
         self.m.title('Player Queue Bot')

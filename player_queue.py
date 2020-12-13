@@ -2,11 +2,20 @@ from queue import PriorityQueue
 
 
 class PlayerQueue:
+    '''Class for a special priority queue that imports a preexisting dictionary
+    of players and how many times they've played
+
+    :param player_dict: Dictionary of players and the number of times they've played
+    '''
     def __init__(self, player_dict={}):
         self._q = PriorityQueue()
         self._player_dict = player_dict
 
     def add_player(self, username):
+        '''Adds a player to the queue
+
+        :param username: Player's username
+        '''
         if username in self._player_dict:
             times_played = self._player_dict[username]
             #the queue class's internal list is public i guess
@@ -19,6 +28,7 @@ class PlayerQueue:
             self._player_dict[username] = 0
 
     def get_next_player(self):
+        '''Returns the next player in the queue (or None if there isn't one)'''
         if not self._q.empty():
             next_player = self._q.get()[1]
             self._player_dict[next_player] += 1
@@ -27,6 +37,9 @@ class PlayerQueue:
             return None
 
     def get_top_players(self):
+        '''Returns a sorted list of tuples of players and the times they've 
+        played in the format of (player, times_played)
+        '''
         player_array = list(self._player_dict.items())
         arr_len = len(player_array)
 
@@ -44,4 +57,5 @@ class PlayerQueue:
 
     @property
     def player_dict(self):
+        '''Dictionary containing all players and how many times they've played'''
         return self._player_dict
